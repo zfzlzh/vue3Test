@@ -1,0 +1,110 @@
+$blue:#3E87E3;
+$gray:#DCDCDC;
+$hoverBlue:rgba(62,135,277,.9);
+$hoverGray:rgba(220,220,220,.7);
+@mixin flex{
+	display:flex
+}
+@mixin jc-center{
+	justify-content: center;
+}
+@mixin jc-end{
+	justify-content: flex-end;
+}
+@mixin jc-start {
+	justify-content: flex-start;
+}
+@mixin jc-bet{
+	justify-content: space-between;
+}
+@mixin jc-aro {
+	justify-content: space-around;
+}
+@mixin ai-center {
+	align-items: center;
+}
+@mixin ai-end {
+	align-items: flex-end;
+}
+@mixin ai-start {
+	align-items: flex-start;
+}
+@mixin wrap{
+	flex-wrap: wrap;
+}
+@mixin overSpread{
+	width:100%;
+	height:100%
+}
+@mixin borderBox{
+	box-sizing: border-box;
+}
+@mixin contentBox{
+	box-sizing: content-box;
+}
+@mixin textEllipsis{
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap
+}
+.bold{
+	font-weight: bold;
+}
+.flexBox{
+	@include flex;
+}
+.flexVerCenter{
+	@include flex;
+	@include ai-center
+}
+.flexMidCenter{
+	@include flex;
+	@include jc-center
+}
+.flexCenter{
+	@extend .flexVerCenter;
+	@include jc-center
+}
+.flexBetCenter{
+	@extend .flexVerCenter;
+	@include jc-bet
+}
+.flexAroCenter{
+	@extend .flexVerCenter;
+	@include jc-aro
+}
+.flexWrap{
+	@extend .flexBox;
+	@include wrap
+}
+.cursorP{
+	cursor:pointer
+}
+
+.form-item{
+	margin-bottom:3vh;
+	@extend .flexBox;
+	@include jc-start
+	
+}
+.form-item > span{
+	width:auto;
+	text-align: right;
+}
+.form-input{
+	width:30vh;
+	height:3.5vh;
+	&.video{
+		height:20vh
+	}
+}
+.form-input-item{
+	width:100%;
+	height:100%;
+	border:1px solid #ccc;
+	border-radius:4px;
+	padding: 0 15px 0 5px;
+	font-size:2vh;
+	@extend .flexVerCenter;
+	@include borderBox
+}
