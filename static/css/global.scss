@@ -47,6 +47,9 @@ $hoverGray:rgba(220,220,220,.7);
 	text-overflow:ellipsis;
 	white-space:nowrap
 }
+@mixin flexColumn{
+	flex-direction: column;
+}
 .bold{
 	font-weight: bold;
 }
