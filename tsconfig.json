@@ -14,5 +14,5 @@
       "~":["./static"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/components/js/Global.js", "src/utils/RequestUtil.js"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/components/js/Global.js", "src/utils/RequestUtil.js", "src/components/zrender/zrenderTool.js", "src/components/zrender/zrenderDraw.js"]
 }

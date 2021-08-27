@@ -14,7 +14,7 @@ export default {
 	    '/ecolab': {
 	      target: 'http://192.168.90.11:9001',
 	      changeOrigin: true,
-	      rewrite: (path:String) => path.replace(/^\/ecolab/, '')
+	      rewrite: (path:string) => path.replace(/^\/ecolab/, '')
 	    }
 	  }
   },

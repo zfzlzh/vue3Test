@@ -8,6 +8,7 @@
 	    <div class="login-right">
 			<div class="global-change">
 				<changeLanguage></changeLanguage>
+				<changeColorTheme></changeColorTheme>
 			</div>
 			<div class="flexCenter login-div">
 				<!-- 登录框 -->
@@ -56,8 +57,8 @@
 
 <script lang="ts">
 	interface login{
-		userName:String,
-		password:String
+		userName:string,
+		password:string
 	}
 	interface rules{
 		userName:Array<rulesItem>,
@@ -65,14 +66,18 @@
 	}
 	interface rulesItem{
 		required:Boolean,
-		message:String,
-		trigger:String
+		message:string,
+		trigger:string
+	}
+	interface setForm{
+		title:string
 	}
 	interface state{
 		cart:login,
 		rules:rules,
 		remPwd:Boolean,
 		cartForm:null,
+		setForm:setForm
 	}
 	import { defineComponent ,ref, reactive,onMounted,computed,nextTick,watch,toRefs,getCurrentInstance } from 'vue'
 	import md5 from 'js-md5'
@@ -81,7 +86,12 @@
 	import { ElMessage } from "element-plus"
 	import {useI18n} from "vue-i18n"
 	import changeLanguage from '@/components/changeLanguage/changeLanguage.vue'
+	import changeColorTheme from '@/components/changeColorTheme/changeColorTheme.vue'
 	export default defineComponent({
+		components:{
+			changeLanguage,
+			changeColorTheme
+		},
 		setup(){
 			const {t} = useI18n()
 			const logoIcon:any = computed(()=>{
@@ -99,6 +109,9 @@
 				},
 				remPwd: ref(false),
 				cartForm:ref(null),
+				setForm:{
+					title:''
+				}
 			})
 			
 			const internalInstance:any = getCurrentInstance()
@@ -146,9 +159,7 @@
 				logoIcon
 			}
 		},
-		components:{
-			changeLanguage
-		}
+		
 	}) 
 </script>
 

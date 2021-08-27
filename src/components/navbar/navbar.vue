@@ -31,7 +31,11 @@ export default defineComponent({
       navbarList:[
         {index:'/homeIndex',title:'首页',children:[]},
         {index:'/editor',title:'编辑器',children:[
-          {index:'/editor/flowPathEditor',title:'流程编辑器',children:[]}
+          {index:'/editor/flowPathEditor',title:'流程编辑器',children:[]},
+          {index:'/editor/customPageEditor',title:'自定义页面编辑器',children:[]}
+        ]},
+        {index:'/report',title:'报表',children:[
+          {index:'/report/customReport',title:'自定义报表',children:[]}
         ]},
       ],
     })
@@ -47,7 +51,9 @@ export default defineComponent({
       handleClose(){},
       selectNavbar(index,indexPath,item){
           router.push({path:index})
-          store.dispatch('pushTabs',{title:item.route,index})
+          store.dispatch('handlerTabs',{title:item.route,index})
+          store.commit('getActiveTabs',index)
+          console.log('store',store.state)
       },
     })
     return {

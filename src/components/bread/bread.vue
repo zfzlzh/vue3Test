@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent,computed,watch,getCurrentInstance,ref,toRefs} from 'vue'
+import {defineComponent,computed,watch,getCurrentInstance,ref,toRefs,reactive} from 'vue'
 import { useRouter,useRoute } from "vue-router"
 import {useStore} from 'vuex'
 import {navbarList} from '../../store/store.d'
@@ -31,6 +31,7 @@ interface state{
 	currentPath:string
 }
 export default defineComponent({
+  name:'bread',
 	setup(){
 		let router = useRouter()
 		let route = useRoute()
@@ -38,24 +39,20 @@ export default defineComponent({
 		const internalInstance:any = getCurrentInstance()
 		let prototype:any = internalInstance.appContext.config.globalProperties
 		
-		const state:state = {
+		const state:state = reactive({
 			currentPath:'',
-		}
-		let nowPath:string = '/homeIndex';
-		watch(route,(newVal,oldVal) => {
-			console.log(newVal.path)
-			nowPath = newVal.path
 		})
-		
 		const breadList = computed(()=>{
-			console.log(nowPath)
+			let nowPath = route.path
 			let pathPartVal:Array<string> = nowPath.split("/");
 			let children:Array<navbarList> = store.state.navbarList
+			let filterPath:string = ""
 			let list = pathPartVal.reduce((pre,val,index)=>{
 				if(index === 0){
 					return pre
 				}
-				let filter = children.filter((item:navbarList) => item.index == '/' + val)[0]
+				filterPath = filterPath + '/' + val
+				let filter = children.filter((item:navbarList) => item.index == filterPath)[0]
 				let path = filter?.title || '无该页面'
 				children = filter?.children || []
 				if(index == pathPartVal.length -1){
@@ -66,13 +63,11 @@ export default defineComponent({
 					sequence:index + 1
 				}] 
 			},[] as Array<breadList>)
-			console.log(list)
 			return list
 		} )
 		return {
 			...toRefs(state),
 			breadList,
-			nowPath
 		}
 	} 
 	
@@ -82,7 +77,7 @@ export default defineComponent({
 
 <style type="text/css" scoped>
 #bread-div {
-  height: 52px;
+  height: 35px;
   position: relative;
   background-color: #ffffff;
   border-bottom: #e4e4e4 1px;
@@ -90,14 +85,14 @@ export default defineComponent({
   font-family: Arial,"SimHei","Helvetica Neue", Helvetica, Arial, "PingFang SC",sans-serif
 }
 #bread-content {
-  height: 52px;
+  height: 35px;
 }
 #bread-margin-bottom {
   height: 20px;
 }
 .bread-offest {
   margin-left: 30px;
-  line-height: 52px;
+  line-height: 30px;
   display: flex;
   align-items: baseline;
   vertical-align: bottom;

@@ -6,3 +6,4 @@ declare module '*.vue' {
 }
 declare module 'js-md5'
 declare module '*.js'
+declare module '*.json'

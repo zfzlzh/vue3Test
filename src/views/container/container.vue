@@ -33,7 +33,10 @@ import {defineComponent} from 'vue'
 .el-container{
 	height:100vh
 }
-:deep(.el-aside){
+.el-header{
+	--el-header-height:40px
+}
+.el-aside{
 	--el-aside-width:11vw
 }
 .el-header{

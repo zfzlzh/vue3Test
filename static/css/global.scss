@@ -2,7 +2,18 @@ $blue:#3E87E3;
 $gray:#DCDCDC;
 $hoverBlue:rgba(62,135,277,.9);
 $hoverGray:rgba(220,220,220,.7);
+:root {
+	--theme-color: #409EFF;
+	--theme-font-color: #fff;
+	--theme-border-color: #409EFF;
+	--theme-focus-color: #66b1ff;
+	--theme-focus-font-color: #fff;
+	--theme-focus-border-color: #66b1ff;
+}
 @mixin flex{
+	display:flex
+}
+@mixin inlineFlex{
 	display:flex
 }
 @mixin jc-center{
@@ -49,6 +60,12 @@ $hoverGray:rgba(220,220,220,.7);
 }
 @mixin flexColumn{
 	flex-direction: column;
+}
+@mixin boxShadowAround{
+	box-shadow: 0 0 8px 0 rgba(0,0,0,.2);
+}
+@mixin cursor($type:pointer){
+	cursor:$type
 }
 .bold{
 	font-weight: bold;

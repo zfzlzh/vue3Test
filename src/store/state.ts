@@ -3,6 +3,7 @@ const state: storeState = {
     tabs:[],
     navbarList:[],
     activeTabs:'',
-    tabsIndexList:[]
+    tabsIndexList:[],
+    tabsNameList:[]
 }
 export default state

@@ -1,5 +1,5 @@
 <template>
-    <div id='changeLanguage'>
+    <div id='changeLanguage' class="flexVerCenter">
         <el-dropdown @command="clickLanguage">
             <span class="el-dropdown-link">
                 <span>{{language}}</span>
@@ -48,7 +48,7 @@ export default defineComponent({
         })
         const language = computed(()=>{
             const nowLanguage = state.languageList.filter(val => locale.value == val.value)
-            let lang:String = nowLanguage[0]?.label || '简体中文'
+            let lang:string = nowLanguage[0]?.label || '简体中文'
             locale.value = nowLanguage.length == 0 ? 'zh-cn' : locale.value
             return lang
         })

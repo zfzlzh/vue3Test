@@ -4,27 +4,28 @@
 			<bread></bread>
 		</div>
 		<div class="header-top-right flexBox">
-			<!--下发接口信息  -->
-			<div class="">
+			<!-- 切换语言 -->
+			<changeLanguage></changeLanguage>
+			<!-- 切换颜色 -->
+			<changeColorTheme></changeColorTheme>
+			<!--头像  -->
+			<div class="header-pic">
 				<el-badge :value="badgeValue" class="badgeitem">
-					<img class="head-badge-img" src="../../../static/img/20200317170320.png" @click="badgeClick">
+					<img :src="headerPic" alt="" class="pic" />
 				</el-badge>
 			</div>
 			<!-- 登出 -->
-			<div class="">
+			<div class="flexVerCenter">
 				<el-dropdown>
 				  <span class="el-dropdown-link">
-					  <div class="flexBox">
-						  <img :src="headerPic" alt="" class="header-pic" />
-						  <p class="loginName"></p>
-					  </div>
+					<span>{{loginName}}</span>
 				    <i class="el-icon-arrow-down el-icon--right"></i>
 				  </span>
 				  <template #dropdown>
 				    <el-dropdown-menu>
-				      <el-dropdown-item icon="el-icon-avatar">信息</el-dropdown-item>
+				      <el-dropdown-item icon="el-icon-s-custom">{{$t('message.message')}}</el-dropdown-item>
 				      <el-dropdown-item icon="el-icon-switch-button"> 
-						  登出
+						  {{$t('message.loginOut')}}
 					  </el-dropdown-item>
 				    </el-dropdown-menu>
 				  </template>
@@ -40,22 +41,59 @@
 
 <script lang="ts">
 	import bread from '../bread/bread.vue'
-	import {defineComponent,computed} from 'vue'
+	import {defineComponent,computed,reactive,toRefs} from 'vue'
+	import changeLanguage from '@/components/changeLanguage/changeLanguage.vue'
+	import changeColorTheme from '@/components/changeColorTheme/changeColorTheme.vue'
 	export default defineComponent({
-		setup(){
-			let uploadHeaderPic
-			let headerPic = computed(()=>{
-				return uploadHeaderPic ? uploadHeaderPic : '../../../static/img/header_pic.png'
-			})
-		},
+		name:'headerDiv',
 		components:{
-			bread
-		}
+			bread,
+			changeLanguage,
+			changeColorTheme
+		},
+		setup(){
+			let uploadHeaderPic:string
+			let headerPic = computed(()=>{
+				return uploadHeaderPic ? uploadHeaderPic : '../../../static/img/basic_header_pic.png'
+			})
+			const state = reactive({
+				loginName:'admin'
+			})
+			return {
+				...toRefs(state),
+				headerPic
+			}
+		},
+		
 	}) 
 </script>
 
 <style lang="scss">
 	.header-top-left{
 		// background:$blue
+	}
+	.header-top-right{
+		&>div{
+			margin-right: 1.5vh;
+			&:last-child{
+				margin-right:0
+			}
+		}
+		.header-pic{
+			height: 4vh;
+    		width: 4vh;
+			.pic{
+				@include overSpread;
+				border-radius:50%
+			}
+		}
+	}
+	.badgeitem.el-badge{
+		height:100%;
+		@include flex;
+		@include ai-center
+	}
+	.head-badge-img{
+		height:77%
 	}
 </style>

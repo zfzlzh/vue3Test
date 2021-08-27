@@ -1,0 +1,34 @@
+{
+    "blue":{
+        "color":"#409EFF",
+        "borderColor":"#409EFF",
+        "fontColor":"#fff",
+        "focusColor":"#66b1ff",
+        "focusBorderColor":"#66b1ff",
+        "focusFontColor":"#fff"
+    },
+    "red": {
+        "color": "#F56C6C",
+        "borderColor": "#F56C6C",
+        "fontColor": "#fff",
+        "focusColor": "#f78989",
+        "focusBorderColor": "#f78989",
+        "focusFontColor": "#fff"
+    },
+    "green": {
+        "color": "#67C23A",
+        "borderColor": "#67C23A",
+        "fontColor": "#fff",
+        "focusColor": "#85ce61",
+        "focusBorderColor": "#85ce61",
+        "focusFontColor": "#fff"
+    },
+    "skyBlue": {
+        "color": "#13c2c2",
+        "borderColor": "#13c2c2",
+        "fontColor": "#fff",
+        "focusColor": "#64efef",
+        "focusBorderColor": "#64efef",
+        "focusFontColor": "#fff"
+    }
+}

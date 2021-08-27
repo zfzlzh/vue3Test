@@ -11,6 +11,7 @@ interface storeState{
     tabs: Array<tabs>,
     navbarList: Array<navbarList>,
     tabsIndexList:Array<string>,
+    tabsNameList:Array<string>,
     activeTabs:string
 }
 export {

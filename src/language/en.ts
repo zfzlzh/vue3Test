@@ -1,10 +1,28 @@
-import language from "./language"
-const english: language = {
-    login: 'login',
-    loginOut: 'login out',
+
+const login:Object = {
+    login: 'Login',
+    loginOut: 'Login Out',
     loginTitle: 'Account Login',
-    userNameTip: 'please enter the userName',
-    rememberPwd: 'rememeberPassword',
-    passwordTip: 'please enterthe password',
+    userNameTip: 'Please enter the userName',
+    rememberPwd: 'RememeberPassword',
+    passwordTip: 'Please enterthe password',
+}
+const flowPathEditor: Object = {
+    basicShapes: 'Basic Shapes',
+    customShapes: 'Custom Shapes',
+    shapesSet:'Setting',
+    miniMap:'Mini Map'
+}
+const english: Object = {
+    ...login,
+    ...flowPathEditor,
+    save: 'Save',
+    sure: 'Sure',
+    delete: 'Delete',
+    search: 'Search',
+    clear: 'Clear',
+    export: 'Export',
+    upload: 'Upload',
+    message:'Message'
 }
 export default english
