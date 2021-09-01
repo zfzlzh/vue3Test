@@ -9,6 +9,10 @@ $hoverGray:rgba(220,220,220,.7);
 	--theme-focus-color: #66b1ff;
 	--theme-focus-font-color: #fff;
 	--theme-focus-border-color: #66b1ff;
+	--theme-hover-color:#64ACF5;
+	--transfer-box-header-height:5vh;
+	--transfer-box-filter-height:7vh;
+	--transfer-box-list-height:25vh
 }
 @mixin flex{
 	display:flex
@@ -66,6 +70,9 @@ $hoverGray:rgba(220,220,220,.7);
 }
 @mixin cursor($type:pointer){
 	cursor:$type
+}
+@mixin circleDiv{
+	border-radius: 50%;
 }
 .bold{
 	font-weight: bold;

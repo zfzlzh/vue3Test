@@ -32,10 +32,13 @@ export default defineComponent({
         {index:'/homeIndex',title:'首页',children:[]},
         {index:'/editor',title:'编辑器',children:[
           {index:'/editor/flowPathEditor',title:'流程编辑器',children:[]},
-          {index:'/editor/customPageEditor',title:'自定义页面编辑器',children:[]}
+          {index:'/editor/flowPathView',title:'流程图查看',children:[]},
         ]},
         {index:'/report',title:'报表',children:[
-          {index:'/report/customReport',title:'自定义报表',children:[]}
+          {index:'/report/customReport',title:'自定义报表',children:[]},
+        ]},
+        {index:'/components',title:'组件',children:[
+          {index:'/components/transferBox',title:'穿梭框',children:[]}
         ]},
       ],
     })

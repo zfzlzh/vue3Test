@@ -29,7 +29,6 @@ export default defineComponent({
     },
     setup(props){
         const menuItem = reactive(props.item)
-        console.log(menuItem)
         const methods = reactive({
             
         })

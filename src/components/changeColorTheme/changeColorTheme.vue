@@ -48,6 +48,7 @@ export default defineComponent({
                    document.documentElement.style.setProperty('--theme-focus-color', nowTheme.focusColor);
                    document.documentElement.style.setProperty('--theme-focus-border-color', nowTheme.focusBorderColor);
                    document.documentElement.style.setProperty('--theme-focus-font-color', nowTheme.focusFontColor);
+                   document.documentElement.style.setProperty('--theme-hover-color', nowTheme.hoverColor);
                }
         })
         const calcColor = computed(()=>{

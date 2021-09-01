@@ -28,7 +28,7 @@ export default function () {
             showDialog: false,
             setForm: {
                 id: '',
-                title: '',
+                name: '',
                 stroke: '',
                 fill: '',
                 lineWidth: '',
@@ -83,11 +83,15 @@ export default function () {
                         default:
                             break;
                     }
-                    newData.position = [position[0] * ratio.x, position[1] * ratio.y]
+                    newData.position = position && position.length == 2 ?  [position[0] * ratio.x, position[1] * ratio.y] : []
+                    console.log('newData', newData)
                     newData.chartIndex = chartType + index
+                    console.log('newData', newData)
+                    console.log('style.fontSize', style.fontSize)
                     if (style.fontSize) {
                         newData.style.fontSize = style.fontSize * ratio.x
                     }
+                    console.log('newData',newData)
                     resolve(newData)
                 })
             },
@@ -136,9 +140,20 @@ export default function () {
                 newShape.ry = shape.ry * ratio.y
                 return newShape
             },
+            //计算新旧容器宽高比例
+            calcRatios(json,dom){
+                let nowW = dom.offsetWidth
+                let nowH = dom.offsetHeight
+                let jsonW = json.offsetW
+                let jsonH = json.offsetH
+                return {
+                    x:nowW / jsonW,
+                    y:nowH / jsonH
+                }
+
+            },
             //初始化
-            init() {
-                let dom = document.getElementById('zrender')
+            init(json,dom,pageType) {
                 state.nowPageOffset = { width: dom.offsetWidth, height: dom.offsetHeight }
                 state.zr = zrender.init(dom)
                 state.group = new zrender.Group();
@@ -163,90 +178,93 @@ export default function () {
                 state.zr.add(state.groupBack)
                 state.zr.add(state.shortTimeGroup)
                 //有数据传入时绘制
-                if (state.addJson && Object.keys(state.addJson).length != 0) {
+                console.log(Object.values(json))
+                if (json && Object.keys(json).length != 0) {
                     nextTick(() => {
-                        Object.keys(state.addJson).forEach((val) => {
-                            if (val != 'connect') {
-                                let instanceOf = state.addJson[val] instanceof Array
-                                let jsonItem = instanceOf === true ? state.addJson[val] : Object.keys(state.addJson[val])
-                                methods.initWhileHasData(instanceOf, jsonItem, state.addJson[val], { width, height })
+                        Object.keys(json).forEach((val) => {
+                            if (!['connect','offsetW','offsetH'].includes(val)) {
+                                let jsonItem = json[val] 
+                                methods.initWhileHasData(jsonItem, json, dom, pageType)
                             }
                         })
                     })
                 }
             },
             //当有数据时的生成
-            initWhileHasData(instanceOf, item, json, domData) {
+            initWhileHasData(item, json, dom, pageType) {
                 let newItem
                 if (item.length != 0) {
+                    console.log('item',item)
                     for (let i = 0; i < item.length; i++) {
                         let val = item[i]
-                        let jsonVal = instanceOf == true ? val : json[val]
-                        jsonVal.draggable = true
-                        jsonVal.invisible = false
-                        //计算分辨率比例
-                        let ratio = { x: '', y: '', xy: '' }
-                        ratio.x = domData.width / jsonVal.offsetW
-                        ratio.y = domData.height / jsonVal.offsetH
-                        //根据比例转换数据完成后生成图形
-                        methods.calcDifferentScreen({ item: jsonVal, ratio, index: i + 1 }).then((obj) => {
-                            switch (obj.chartType) {
-                                case 'polyline':
-                                case 'polygon':
-                                    newItem = zrenderDraw.drawPolyline(obj)
-                                    newItem.on('drag', methods.changePolyline)
-                                    let position = obj.position && obj.position.length != 0 ? obj.position : [0, 0]
-                                    obj.shape.points.forEach((points, index) => {
-                                        methods.createDragRect({
-                                            shape: {
-                                                x: points[0] + position[0],
-                                                y: points[1] + position[1],
-                                            },
-                                            nameIndex: index + 1,
-                                            name: obj.chartIndex + '|' + index,
-                                            invisible: true,
+                        let jsonVal = val
+                        // console.log(jsonVal)
+                        if(typeof jsonVal == 'object'){
+                            jsonVal.draggable = pageType == 'edit' ? true : false
+                            jsonVal.invisible = false
+                            //计算分辨率比例
+                            let ratio = methods.calcRatios(json, dom)
+                            //根据比例转换数据完成后生成图形
+                            methods.calcDifferentScreen({ item: jsonVal, ratio, index: i + 1 }).then((obj) => {
+                                console.log('obj',obj)
+                                switch (obj.chartType) {
+                                    case 'polyline':
+                                    case 'polygon':
+                                        newItem = zrenderDraw.drawPolyline(obj)
+                                        newItem.on('drag', methods.changePolyline)
+                                        let position = obj.position && obj.position.length != 0 ? obj.position : [0, 0]
+                                        obj.shape.points.forEach((points, index) => {
+                                            methods.createDragRect({
+                                                shape: {
+                                                    x: points[0] + position[0],
+                                                    y: points[1] + position[1],
+                                                },
+                                                nameIndex: index + 1,
+                                                name: obj.chartIndex + '|' + index,
+                                                invisible: true,
+                                            })
                                         })
-                                    })
-                                    break;
-                                case 'image':
-                                    newItem = zrenderDraw.drawImage(obj)
-                                    newItem.on('drag', methods.dragBigRect)
-                                    methods.calcDragRectData(newItem).then((data) => {
-                                        data.forEach((val) => {
-                                            val.invisible = true
-                                            methods.createDragRect(val)
+                                        break;
+                                    case 'image':
+                                        newItem = zrenderDraw.drawImage(obj)
+                                        newItem.on('drag', methods.dragBigRect)
+                                        methods.calcDragRectData(newItem).then((data) => {
+                                            data.forEach((val) => {
+                                                val.invisible = true
+                                                methods.createDragRect(val)
+                                            })
                                         })
-                                    })
-                                    break;
-                                case 'rect':
-                                    newItem = zrenderDraw.drawRect(obj)
-                                    newItem.on('drag', methods.dragBigRect)
-                                    console.log(obj)
-                                    methods.calcDragRectData(newItem).then((data) => {
-                                        data.forEach((val) => {
-                                            val.invisible = true
-                                            methods.createDragRect(val)
+                                        break;
+                                    case 'rect':
+                                        newItem = zrenderDraw.drawRect(obj)
+                                        newItem.on('drag', methods.dragBigRect)
+                                        console.log(obj)
+                                        methods.calcDragRectData(newItem).then((data) => {
+                                            data.forEach((val) => {
+                                                val.invisible = true
+                                                methods.createDragRect(val)
+                                            })
                                         })
-                                    })
-                                    break;
-                                case 'circle':
-                                    newItem = zrenderDraw.drawCircle(obj)
-                                    newItem.on('drag', methods.dragCircle)
-                                    methods.calcDragRectDataForCircle(newItem).then((data) => {
-                                        data.forEach((val) => {
-                                            val.invisible = true
-                                            methods.createDragRect(val)
+                                        break;
+                                    case 'circle':
+                                        newItem = zrenderDraw.drawCircle(obj)
+                                        newItem.on('drag', methods.dragCircle)
+                                        methods.calcDragRectDataForCircle(newItem).then((data) => {
+                                            data.forEach((val) => {
+                                                val.invisible = true
+                                                methods.createDragRect(val)
+                                            })
                                         })
-                                    })
-                                    break;
-                                default:
-                                    break;
-                            }
-                            newItem.on('dblclick', methods.showSetForm)
-                            newItem.on('click', methods.handlerClick)
-                            state.group.add(newItem)
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                newItem.on('dblclick', methods.showSetForm)
+                                newItem.on('click', methods.handlerClick)
+                                state.group.add(newItem)
 
-                        })
+                            })
+                        }
                     }
                 }
             },
@@ -263,7 +281,6 @@ export default function () {
                     state.nowType = type
                     let num
                     state.clickShapes = true
-                    state.cliclShapesId = state.group._children.length
                     switch (type) {
                         case 'rect':
                             methods.drawRectFunc()
@@ -281,9 +298,6 @@ export default function () {
                         case 'ellipse':
                             methods.drawEllipseFunc()
                             break;
-                        case 'delete':
-                            state.needDelete = !state.needDelete
-                            break
                         case 'bezier':
                             state.needClose = type
                             num = state.group._children ? state.group._children.length : 0
@@ -431,6 +445,9 @@ export default function () {
 
                 })
                 state.clickPoints.push(points)
+                // if(state.clickPoints.length >= 2){
+                //     methods.createPolylineFunc()
+                // }
             },
             //完成折线
             createpolyline(el) {
@@ -1010,10 +1027,14 @@ export default function () {
              * needDelete为true -- 删除点击图形
              */
             handlerClick(el) {
+                console.log('state.needDelete', state.needDelete)
                 if (state.needDelete) {
                     methods.deleteItem(el)
                 } else {
                     methods.hideShowRect(el)
+                    console.log(el)
+                    state.clickShapes = true
+                    state.clickShapesItem = el.target
                 }
             },
             //处理可拖拽小方块的显示
@@ -1025,13 +1046,10 @@ export default function () {
                         val.attr({
                             invisible: false,
                         })
-                        state.clickShapes = false
                     } else {
                         val.attr({
                             invisible: true,
                         })
-                        state.clickShapes = true
-                        state.cliclShapesId = el.target.id
                     }
                 })
                 
@@ -1078,6 +1096,9 @@ export default function () {
 
             },
             //删除
+            changeDeleteState(val){
+                state.needDelete = val
+            },
             deleteItem(el) {
                 let nowChartIndex = el.target.chartIndex
                 state.group.remove(el.target)
@@ -1114,7 +1135,8 @@ export default function () {
                         state.shortTimeGroup.remove(item)
                     })
                 }
-
+                state.clickShapes = false
+                state.clickShapesItem = {}
             },
             //关闭按钮事件
             handlerClose() {
@@ -1138,7 +1160,7 @@ export default function () {
                 state.showDialog = true
                 let target = el.target
                 state.setForm = { ...state.setForm, ...target.style }
-                state.setForm.title = target.name
+                state.setForm.name = target.name
                 state.setForm.id = target.id
                 state.setForm.z = target.z
             },
@@ -1147,51 +1169,36 @@ export default function () {
                 state.group.eachChild((val) => {
                     if (val.id == clickShapesId) {
                         let style = Object.keys(setForm).reduce((pre, item) => {
-                            if (!pre[item] && !setForm[item]) {
-                                return pre
+                            if (!['id', 'name', 'z'].includes(item)){
+                                pre[item] = setForm[item] ? setForm[item] : pre[item]
                             }
-                            pre[item] = setForm[item] ? setForm[item] : pre[item]
                             return pre
                         }, val.style)
                         val.attr({
                             style,
-                            name: setForm.title,
+                            name: setForm.name,
                             z: setForm.z
                         })
-                        // methods.closeDialog()
                     }
                 })
-            },
-            //关闭配置窗口
-            closeDialog() {
-                state.showDialog = false
             },
             //导出
             //导出文件各类型操作
             handlerChartTypeJson(obj) {
                 let { type, json } = obj
-                let isObj = state.needObjList.includes(type)
-                let back = isObj ? {} : []
-                console.log('back', json)
+                let back =  []
                 if (!json || json.length == 0) {
                     return back
                 }
                 let newJson = json.reduce((pre2, val) => {
                     let { shape, position, style, offsetW, offsetH, name, chartType, z, zlevel } = val
-                    if (isObj) {
-                        pre2[val.name] = type == 'image' ? { position, style, offsetW, offsetH, name, chartType, z, zlevel } : { shape, position, style, offsetW, offsetH, name, chartTyp, z, zlevele }
-                        return pre2
-                    } else {
-                        return type == 'image' ? [...pre2, { position, style, offsetW, offsetH, name, chartType, z, zlevel }] : [...pre2, { shape, position, style, offsetW, offsetH, name, chartType, z, zlevel }]
-                    }
+                    return type == 'image' ? [...pre2, { position, style, offsetW, offsetH, name, chartType, z, zlevel }] : [...pre2, { shape, position, style, offsetW, offsetH, name, chartType, z, zlevel }]
                 }, back)
-                console.log(back)
                 return newJson
             },
-            //导出json文件
-            exportJson(title) {
+            handlerData(){
                 let json = { polyline: [], rect: [], image: [], connect: [] }
-                let dom = document.getElementById('zrenderTool')
+                let dom = document.getElementById('zrender')
                 let width = dom.offsetWidth
                 let height = dom.offsetHeight
                 let reduceObj = {}
@@ -1203,9 +1210,10 @@ export default function () {
                     }
                     //记录当前分辨率
                     let item = methods.reduceItem(val, reduceObj)
-                    item = { ...item, offsetW: width, offsetH: height }
                     json[val.type].push(item)
                 })
+                json.offsetW = width
+                json.offsetH = height
                 console.log('json', json)
                 //rect与polyline的关联
                 if (json.rect.length != 0) {
@@ -1221,11 +1229,16 @@ export default function () {
                 console.log('/', json)
                 //数据操作，只取shape，style，position，offsetW，offsetH，name,z,zlevel
                 Object.keys(json).forEach((val) => {
-                    if (val != 'connect') {
+                    if (!['connect','offsetW','offsetH'].includes(val)) {
                         json[val] = methods.handlerChartTypeJson({ type: val, json: json[val] })
                     }
                 })
                 console.log('josn2', json)
+                return json
+            },
+            //导出json文件
+            exportJson(title = 'zrenderJson') {
+                let json = methods.handlerData()
                 var data = JSON.stringify(json)
                 //encodeURIComponent解决中文乱码
                 let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(data);
@@ -1269,15 +1282,13 @@ export default function () {
             },
             closePngSet() {
                 state.showPngSet = false
-
             },
             //导出图片
             toCanvas() {
                 let time = setTimeout(() => {
-                    let { title, colorType, fill } = lodash.cloneDeep(state.pngSetForm)
-                    let ele = document.getElementById('zrenderTool')
+                    let { title = 'picture', colorType, fill } = lodash.cloneDeep(state.pngSetForm)
+                    let ele = document.getElementById('zrender')
                     let ignoreElements = [];
-                    ignoreElements.push(ele.querySelector('.tool'))
                     ignoreElements.push(ele.querySelector('.pngSet'))
                     let eleW = ele.offsetWidth;// 获得该容器的宽
                     let eleH = ele.offsetHeight;// 获得该容器的高
@@ -1319,6 +1330,11 @@ export default function () {
                     clearTimeout(time)
                 }, 100)
 
+            },
+            saveData(){
+                let json = methods.handlerData()
+                var data = JSON.stringify(json)
+                localStorage.setItem('flowPath',data)
             }
         })
         return {

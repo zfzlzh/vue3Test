@@ -57,7 +57,8 @@
 				return uploadHeaderPic ? uploadHeaderPic : '../../../static/img/basic_header_pic.png'
 			})
 			const state = reactive({
-				loginName:'admin'
+				loginName:'admin',
+				badgeValue:''
 			})
 			return {
 				...toRefs(state),

@@ -34,16 +34,22 @@ const routes = [
 				meta: { title: "流程编辑器" },
 			},
 			{
-				path: "/editor/customPageEditor",
-				component: () => import('../views/customPageEditor/index.vue'),
-				name: "customPageEditor",
-				meta: { title: "自定义页面编辑器" },
+				path: "/editor/flowPathView",
+				component: () => import('../views/flowPathView/index.vue'),
+				name: "flowPathView",
+				meta: { title: "流程图查看" },
 			},
 			{
 				path: "/report/customReport",
 				component: () => import('../views/customReport/index.vue'),
 				name: "customReport",
 				meta: { title: "自定义报表" },
+			},
+			{
+				path: "/components/transferBox",
+				component: () => import('../views/transferBox/index.vue'),
+				name: "transferBox",
+				meta: { title: "穿梭框" },
 			}
 		]
 	},
